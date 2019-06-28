@@ -142,11 +142,11 @@ $ oc expose service frontend
 Specify the OpenShift domain
 \$ oc set env dc/frontend OS_SUBDOMAIN=<OPENSHIFT-DOMAIN>
 
-# Using CDK
+## Using CDK
 
 \$ oc set env dc/frontend OS_SUBDOMAIN=`minishift ip`.nip.io
 
-# Example: OS_SUBDOMAIN=192.168.64.11.nip.io
+### Example: OS_SUBDOMAIN=192.168.64.11.nip.io
 
 $ oc set env dc/frontend OS_SUBDOMAIN=192.168.64.11.nip.io
 (Optional) Enable Readiness probe
@@ -331,9 +331,9 @@ Modify the service.
 
 \$ vim src/main/java/com/redhat/developers/msa/api_gateway/CamelRestEndpoints.java
 
-# replace .transform().body(List.class, list -> list)
+ replace .transform().body(List.class, list -> list)
 
-# by .transform().body(List.class, list -> list.stream().map(res -> "UPDATED - " + res).collect(java.util.stream.Collectors.toList()))
+ by .transform().body(List.class, list -> list.stream().map(res -> "UPDATED - " + res).collect(java.util.stream.Collectors.toList()))
 
 Create a "new" version of the application using a different name..
 
@@ -347,7 +347,7 @@ Switch the route to the "new" application.
 
 \$ oc patch route/api-gateway -p '{"spec": {"to": {"name": "api-gateway-blue" }}}'
 
-# To return to the "old" application
+ To return to the "old" application
 
 \$ oc patch route/api-gateway -p '{"spec": {"to": {"name": "api-gateway" }}}'
 (Optional) Remove the "old" version.
@@ -363,11 +363,11 @@ Modify the service.
 
 \$ vim lib/api.js
 
-# go to line 32
+ go to line 32
 
-# replace const sayBonjour = () => `Bonjour de ${os.hostname()}`;
+ replace const sayBonjour = () => `Bonjour de ${os.hostname()}`;
 
-# by const sayBonjour = () => `Version 2 - Bonjour de ${os.hostname()}`;
+ by const sayBonjour = () => `Version 2 - Bonjour de ${os.hostname()}`;
 
 Create a "new" version of the application using a different name.
 
@@ -396,11 +396,11 @@ Modify the service.
 
 \$ vim lib/api.js
 
-# go to line 32
+ go to line 32
 
-# replace const sayBonjour = () => `Bonjour de ${os.hostname()}`;
+ replace const sayBonjour = () => `Bonjour de ${os.hostname()}`;
 
-# by const sayBonjour = () => `Version 2 - Bonjour de ${os.hostname()}`;
+ by const sayBonjour = () => `Version 2 - Bonjour de ${os.hostname()}`;
 
 Create a "new" version of the application using a different name..
 
@@ -421,15 +421,15 @@ Simulate multiple clients
 
 \$ oc scale dc/bonjour --replicas=3
 
-# Simulate 10 new clients and note that 25% of the requests are made on bonjour-new.
+### Simulate 10 new clients and note that 25% of the requests are made on bonjour-new.
 
 \$ for i in {1..10}; do curl http://bonjour-helloworld-msa.`minishift ip`.nip.io/api/bonjour ; echo ""; done;
 
-# Simulate the same client
+### Simulate the same client
 
 $ curl -b cookies.txt -c cookies.txt  http://bonjour-helloworld-msa.$(minishift ip).nip.io/api/bonjour
 
-# To change the credentials, delete the cookies file
+### To change the credentials, delete the cookies file
 
 \$ rm cookies.txt
 To return to the original state
