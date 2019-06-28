@@ -1,0 +1,34 @@
+---
+- name: Verify if variables are set
+  fail:
+    msg: "[Target directory] and/or [OpenShift host] is not defined. Please edit vars.yml"
+  when: (workdir is undefined) or (openshift is undefined)
+
+- name: Login in OpenShift as administrator
+  shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift }}"
+
+- name: Adjust SCC to use AnyUID
+  shell: "oc apply -f https://raw.githubusercontent.com/ravichalla/msaproject/master/anyuid.yaml"
+
+- name: Create Workdir
+  file:
+    path: "{{ workdir }}"
+    state: directory
+
+- name: Checkout source code from Github
+  git:
+    repo: "https://github.com/ravichalla/{{ item.name }}"
+    dest: "{{ workdir }}/{{ item.name }}"
+    update: yes
+  with_items: "{{ msa_projects }}"
+  when: clone_modules
+
+- name: Compile Java Projects
+  shell: "mvn -f {{ workdir }}/{{ item.name }}/pom.xml package"
+  with_items: "{{ msa_projects }}"
+  when: "item.project == 'java'"
+
+- name: NPM install NodeJS Projects
+  shell: "npm --prefix {{ workdir }}/{{ item.name }} install {{ workdir }}/{{ item.name }}"
+  with_items: "{{ msa_projects }}"
+  when: "item.project == 'node'"
